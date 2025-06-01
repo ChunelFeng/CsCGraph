@@ -1,12 +1,11 @@
 namespace src;
 
 using System.Collections.Generic;
-using System.Threading;
 
 internal class GParamManager
 {
     private readonly Dictionary<string, GParam> _params = new Dictionary<string, GParam>();
-    private readonly Lock _lock = new Lock();
+    private readonly object _lock = new object();
 
     internal CStatus Create<T>(string key) where T : GParam, new()
     {

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 public class GPipeline
 {
-    private readonly List<GElement> _elements = [];
+    private readonly List<GElement> _elements = new List<GElement>();
     private int _finishedSize = 0;
-    private readonly Lock _executeLock = new Lock();
+    private readonly object _executeLock = new object();
     private readonly ManualResetEventSlim _executeEvent = new ManualResetEventSlim(false);
     private CStatus _status = new CStatus();
     private readonly GParamManager _paramManager = new GParamManager();
