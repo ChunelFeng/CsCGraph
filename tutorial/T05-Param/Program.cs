@@ -55,12 +55,12 @@ class Program
     private static void Main(string[] args)
     {
         var pipeline = new GPipeline();
-        pipeline.RegisterGElement<MyReadParamNode>(out var a, [], "readNodeA");
-        pipeline.RegisterGElement<MyReadParamNode>(out var b, [a], "readNodeB");
-        pipeline.RegisterGElement<MyWriteParamNode>(out var c, [a], "writeNodeC");
-        pipeline.RegisterGElement<MyWriteParamNode>(out var d, [a], "writeNodeD", 2);
-        pipeline.RegisterGElement<MyReadParamNode>(out var e, [a], "readNodeE");
-        pipeline.RegisterGElement<MyWriteParamNode>(out var f, [b, c, d, e], "writeNodeF");
+        pipeline.RegisterGElement<MyReadParamNode>(out var a, Array.Empty<GElement>(), "readNodeA");
+        pipeline.RegisterGElement<MyReadParamNode>(out var b, new[] { a }, "readNodeB");
+        pipeline.RegisterGElement<MyWriteParamNode>(out var c, new[] { a }, "writeNodeC");
+        pipeline.RegisterGElement<MyWriteParamNode>(out var d, new[] { a }, "writeNodeD", 2);
+        pipeline.RegisterGElement<MyReadParamNode>(out var e, new[] { a }, "readNodeE");
+        pipeline.RegisterGElement<MyWriteParamNode>(out var f, new[] { b, c, d, e }, "writeNodeF");
 
         pipeline.Process(3);
     }

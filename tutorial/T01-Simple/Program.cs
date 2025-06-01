@@ -1,6 +1,5 @@
 ﻿using src;
 
-
 namespace T01_Simple;
 
 class Program
@@ -14,7 +13,7 @@ class Program
             return new CStatus();
         }
     }
-    
+
     private class MyNode2 : GNode
     {
         protected override CStatus Run()
@@ -28,10 +27,10 @@ class Program
     private static void Main(string[] args)
     {
         var pipeline = new GPipeline();
-        pipeline.RegisterGElement<MyNode1>(out var a, [], "nodeA");
-        pipeline.RegisterGElement<MyNode2>(out var b, [a], "nodeB");
-        pipeline.RegisterGElement<MyNode1>(out var c, [a], "nodeC");
-        pipeline.RegisterGElement<MyNode2>(out var d, [b, c], "nodeD");
+        pipeline.RegisterGElement<MyNode1>(out var a, Array.Empty<GElement>(), "nodeA");
+        pipeline.RegisterGElement<MyNode2>(out var b, new [] {a}, "nodeB");
+        pipeline.RegisterGElement<MyNode1>(out var c, new [] {a}, "nodeC");
+        pipeline.RegisterGElement<MyNode2>(out var d, new [] {b, c}, "nodeD");
 
         pipeline.Process();
     }

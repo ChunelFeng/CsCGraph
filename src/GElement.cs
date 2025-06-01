@@ -5,8 +5,8 @@ using System.Threading;
 
 public abstract class GElement
 {
-    internal HashSet<GElement> RunBefore { get; } = [];
-    internal HashSet<GElement> Dependence { get; } = [];
+    internal HashSet<GElement> RunBefore { get; } = new HashSet<GElement>();
+    internal HashSet<GElement> Dependence { get; } = new HashSet<GElement>();
     private GParamManager? _paramManager = null;
     private string _name = string.Empty;
     private int _loop = 1;
