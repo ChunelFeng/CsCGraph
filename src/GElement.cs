@@ -2,6 +2,7 @@ namespace src;
 
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 public abstract class GElement
 {
@@ -17,14 +18,14 @@ public abstract class GElement
         return new CStatus();
     }
 
-    protected abstract CStatus Run();
+    protected abstract Task<CStatus> RunAsync();
 
-    internal CStatus FatRun()
+    internal async Task<CStatus> FatRunAsync()
     {
         var status = new CStatus();
         for (var i = 0; i < _loop; i++)
         {
-            status += Run();
+            status += await RunAsync();
             if (!status.IsOk())
             {
                 break;
@@ -46,7 +47,7 @@ public abstract class GElement
 
     protected CStatus CreateGParam<T>(string key) where T : GParam, new()
     {
-        return _paramManager == null 
+        return _paramManager == null
             ? new CStatus("param manager is null")
             : _paramManager.Create<T>(key);
     }
@@ -94,4 +95,3 @@ public abstract class GElement
         Interlocked.Exchange(ref _leftDependCounter, Dependence.Count);
     }
 }
-

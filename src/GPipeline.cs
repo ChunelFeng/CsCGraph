@@ -9,22 +9,22 @@ public class GPipeline
     private readonly List<GElement> _elements = new List<GElement>();
     private int _finishedSize = 0;
     private readonly object _executeLock = new object();
-    private readonly ManualResetEventSlim _executeEvent = new ManualResetEventSlim(false);
+    private readonly TaskCompletionSource<bool> _executeTcs = new TaskCompletionSource<bool>();
     private CStatus _status = new CStatus();
     private readonly GParamManager _paramManager = new GParamManager();
 
-    public CStatus Process(int times = 1)
+    public async Task<CStatus> ProcessAsync(int times = 1)
     {
         Init();
         while (times-- > 0 && _status.IsOk())
         {
-            Run();
+            await RunAsync();
         }
         Destroy();
         return _status;
     }
 
-    public CStatus RegisterGElement<T>(out GElement element, 
+    public CStatus RegisterGElement<T>(out GElement element,
                                        IEnumerable<GElement> depends,
                                        string name,
                                        int loop = 1) where T : GElement, new()
@@ -46,11 +46,11 @@ public class GPipeline
         return _status;
     }
 
-    private CStatus Run()
+    private async Task<CStatus> RunAsync()
     {
         Setup();
-        ExecuteAll();
-        Reset();
+        await ExecuteAllAsync();
+        await ResetAsync();
         return _status;
     }
 
@@ -63,40 +63,38 @@ public class GPipeline
         return _status;
     }
 
-    private void ExecuteAll()
+    private async Task ExecuteAllAsync()
     {
-        foreach (var element in _elements.Where(element => element.Dependence.Count == 0))
-        { 
-            Task.Run(() =>
-                {
-                    ExecuteOne(element);
-                }
-            );
+        var tasks = new List<Task>();
+        foreach (var element in _elements.Where(e => e.Dependence.Count == 0))
+        {
+
+            tasks.Add(Task.Run(() => ExecuteOneAsync(element)));
         }
+        await Task.WhenAll(tasks); 
     }
 
-    private void ExecuteOne(GElement element)
+    private async Task ExecuteOneAsync(GElement element)
     {
-        if (!_status.IsOk())
-        {
-            return;
-        }
+        if (!_status.IsOk()) return;
 
-        _status += element.FatRun();
-        foreach (var cur in element.RunBefore.Where(cur => cur.DecrementDepend()))
+
+        _status += await element.FatRunAsync();
+
+
+        foreach (var cur in element.RunBefore) 
         {
-            Task.Run(() =>
-                {
-                    ExecuteOne(cur);
-                }
-            );
+            if (cur.DecrementDepend()) 
+            {
+                Task.Run(() => ExecuteOneAsync(cur));
+            }
         }
 
         lock (_executeLock)
         {
-            if (++_finishedSize >= _elements.Count || !_status.IsOk())
+            if (Interlocked.Increment(ref _finishedSize) >= _elements.Count || !_status.IsOk())
             {
-                _executeEvent.Set();
+                _executeTcs.TrySetResult(true);
             }
         }
     }
@@ -104,8 +102,11 @@ public class GPipeline
     private void Setup()
     {
         _finishedSize = 0;
-        _executeEvent.Reset();
-        
+        if (_executeTcs.Task.IsCompleted)
+        {
+            _executeTcs.TrySetCanceled();
+        }
+
         foreach (var element in _elements)
         {
             element.ResetDepend();
@@ -114,9 +115,9 @@ public class GPipeline
         _status += _paramManager.Setup();
     }
 
-    private void Reset()
+    private async Task ResetAsync()
     {
-        _executeEvent.Wait();
+        await _executeTcs.Task;
         _paramManager.Reset(_status);
     }
 }
