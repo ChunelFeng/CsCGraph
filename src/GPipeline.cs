@@ -65,12 +65,7 @@ public class GPipeline
 
     private async Task ExecuteAllAsync()
     {
-        var tasks = new List<Task>();
-        foreach (var element in _elements.Where(e => e.Dependence.Count == 0))
-        {
-
-            tasks.Add(Task.Run(() => ExecuteOneAsync(element)));
-        }
+        var tasks = _elements.Where(e => e.Dependence.Count == 0).Select(element => Task.Run(() => ExecuteOneAsync(element))).ToList();
         await Task.WhenAll(tasks); 
     }
 
@@ -78,16 +73,10 @@ public class GPipeline
     {
         if (!_status.IsOk()) return;
 
-
         _status += await element.FatRunAsync();
-
-
-        foreach (var cur in element.RunBefore) 
+        foreach (var cur in element.RunBefore.Where(cur => cur.DecrementDepend()))
         {
-            if (cur.DecrementDepend()) 
-            {
-                Task.Run(() => ExecuteOneAsync(cur));
-            }
+            _ = Task.Run(() => ExecuteOneAsync(cur));
         }
 
         lock (_executeLock)

@@ -4,16 +4,16 @@ namespace T05_Param;
 
 class Program
 {
-    // private class MyParam : GParam
-    // {
-    //     protected override void Reset(CStatus curStatus)
-    //     {
-    //         Val = 0;
-    //     }
-    //
-    //     public int Val { set; get; } = 0;
-    //     public int Loop { set; get; } = 0;
-    // }
+    private class MyParam : GParam
+    {
+        protected override void Reset(CStatus curStatus)
+        {
+            Val = 0;
+        }
+    
+        public int Val { set; get; } = 0;
+        public int Loop { set; get; } = 0;
+    }
     //
     // private class MyReadParamNode : GNode
     // {
