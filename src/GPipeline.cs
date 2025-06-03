@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 public class GPipeline
 {
-    private readonly List<GElement> _elements = new List<GElement>();
-    private int _finishedSize = 0;
-    private readonly object _executeLock = new object();
-    private readonly ManualResetEventSlim _executeEvent = new ManualResetEventSlim(false);
-    private CStatus _status = new CStatus();
-    private readonly GParamManager _paramManager = new GParamManager();
+    private readonly List<GElement> _elements = new ();
+    private int _finishedSize;
+    private readonly object _executeLock = new ();
+    private readonly ManualResetEventSlim _executeEvent = new (false);
+    private CStatus _status = new ();
+    private readonly GParamManager _paramManager = new ();
 
     public CStatus Process(int times = 1)
     {

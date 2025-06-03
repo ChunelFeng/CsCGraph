@@ -4,7 +4,7 @@ using System.Threading;
 
 public abstract class GParam
 {
-    private readonly ReaderWriterLockSlim _paramLock = new ReaderWriterLockSlim();
+    private readonly ReaderWriterLockSlim _paramLock = new ();
     
     protected internal virtual CStatus Setup()
     {

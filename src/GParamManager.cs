@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 internal class GParamManager
 {
-    private readonly Dictionary<string, GParam> _params = new Dictionary<string, GParam>();
-    private readonly object _lock = new object();
+    private readonly Dictionary<string, GParam> _params = new ();
+    private readonly object _lock = new ();
 
     internal CStatus Create<T>(string key) where T : GParam, new()
     {
