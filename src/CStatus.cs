@@ -20,6 +20,11 @@ public class CStatus
         return ErrorCode == 0;
     }
 
+    public bool IsErr()
+    {
+        return ErrorCode < 0;
+    }
+
     private CStatus AddAssign(CStatus cur)
     {
         if (!IsOk() || cur.IsOk())

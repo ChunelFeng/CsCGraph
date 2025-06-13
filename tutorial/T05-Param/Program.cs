@@ -19,8 +19,7 @@ class Program
     {
         protected override CStatus Init()
         {
-            var status = CreateGParam<MyParam>("param1");
-            return status;
+            return CreateGParam<MyParam>("param1");
         }
 
         protected override CStatus Run()
@@ -40,6 +39,8 @@ class Program
             {
                 return new CStatus("get param1 failed");
             }
+            
+            Console.WriteLine($"[write] [{GetName()}] loop = {param.Loop}, val = {param.Val}");
 
             param.Val += 1;
             param.Loop += 1;

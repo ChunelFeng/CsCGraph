@@ -22,13 +22,9 @@ public abstract class GElement
     internal CStatus FatRun()
     {
         var status = new CStatus();
-        for (var i = 0; i < _loop; i++)
+        for (var i = 0; i < _loop && !status.IsErr(); i++)
         {
             status += Run();
-            if (!status.IsOk())
-            {
-                break;
-            }
         }
 
         return status;
