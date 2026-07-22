@@ -399,4 +399,6 @@ FodyWeavers.xsd
 *.sln.iml
 
 .idea
-
+.docs/
+.superpowers/
+.codegraph/
