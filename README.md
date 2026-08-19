@@ -1,10 +1,12 @@
+
+
 <h1 align="center">CsCGraph</h1>
 
 > CsCGraph is a C# native, CGraph-API-liked project
 
 # 一. 简介
 
-CsCGraph 是一个基于原生 C# `net10.0/C# 14` 实现的的调度框架，是 [CGraph](https://github.com/ChunelFeng/CGraph) 多语言版本之一
+CsCGraph 是一个基于原生 C# `net10.0/C# 14` 实现的调度框架，是 [CGraph](https://github.com/ChunelFeng/CGraph) 多语言版本之一
 
 # 二. 入门Demo
 
